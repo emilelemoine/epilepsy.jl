@@ -1,9 +1,3 @@
-using Statistics, LinearAlgebra, Distances
-export std,
-    pairwise!,
-    Chebyshev,
-    tril!
-
 """
     sample_entropy(x, m, r, τ)
 
@@ -18,7 +12,7 @@ julia> sample_entropy([1, 2, 3, 1, 2, 3], m=2, r=0.2, τ=1)
 0.6931471805599453
 ```
 """
-function sample_entropy(x, m, r, τ=1)
+function sample_entropy(x::AbstractArray, m, r)
     #=
     x -> normalized signal (1d vector)
     m -> embedding dimension (must be > length of signal)
