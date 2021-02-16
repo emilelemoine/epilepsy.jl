@@ -27,6 +27,7 @@ function sample_entropy(x::AbstractArray, m, r)
 
     # Create template vectors (of length m + 1)
     matches = zeros(m + 1, N)
+    fill!(matches, x[end])
     for i in 1:m + 1
         matches[i, 1:(N + 1 - i)] = x[i:end]
     end
