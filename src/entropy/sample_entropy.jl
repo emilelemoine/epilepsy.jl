@@ -1,23 +1,23 @@
 """
-    sample_entropy(x, m, r, τ)
+    sample_entropy(x, m, r, δ)
 
 Compute the Sample Entropy[^1] of `x`.
 
 Compute Sample Entropy with template size `m` and tolerance factor `r`.
-If timestep `τ` is provided, downsample signal `x` with timestep `τ`.
+If timestep `δ` is provided, downsample signal `x` with timestep `δ`.
 
 # Examples
 ```julia
-julia> sample_entropy([1, 2, 3, 1, 2, 3], m=2, r=0.2, τ=1)
+julia> sample_entropy([1, 2, 3, 1, 2, 3], m=2, r=0.2, δ=1)
 0.6931471805599453
 ```
 """
-function sample_entropy(x::AbstractArray, m=2, r=0.2, τ=1)
+function sample_entropy(x::AbstractArray, m=2, r=0.2, δ=1)
     #=
     x -> normalized signal (1d vector)
     m -> embedding dimension (must be > length of signal)
     r -> tolerance factor
-    τ -> delay =#
+    δ -> delay =#
     # TODO For multiscale entropy: wavelet to isolate bands
     N = length(x)
     σ = std(x)
@@ -29,8 +29,8 @@ function sample_entropy(x::AbstractArray, m=2, r=0.2, τ=1)
         matches[i, 1:(N + 1 - i)] = x[i:end]
     end
 
-    matches[m + 1, 1:(N + 1 - m - τ)] = x[m + τ:end]
-    matches = matches[:, 1:N + 1 - m - τ]
+    matches[m + 1, 1:(N + 1 - m - δ)] = x[m + δ:end]
+    matches = matches[:, 1:N + 1 - m - δ]
 
     # Calculate pairwise distances for templates of length m
     dist_m = zeros(N - m, N - m)
@@ -50,7 +50,19 @@ function sample_entropy(x::AbstractArray, m=2, r=0.2, τ=1)
     dist_m1 = dist_m1[tril!(trues(size(dist_m1)), -1)]
     A = count(x -> x <= tolerance, dist_m1)
 
-    -log(A / B)
-    # Return object with B, A and CI around sampen
+    -log(A / B), A, B
+
+end
+
+function multiscale_entropy(x::AbstractArray, τ=1, m=2, r=0.2, δ=1)
+
+    N = length(x)
+    x = x[1:end - (N % τ)]
+    N = length(x)
+    dims = (τ, Int(N / τ))
+    x = reshape(x, dims)
+    x_mse = mean(x, dims=1)
+
+    sample_entropy(x_mse, m, r, δ)
 
 end

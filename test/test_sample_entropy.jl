@@ -8,6 +8,8 @@ sine = sin.(collect(1:0.1:1000))
 
 m = 3
 r = 0.2
+δ = 1
+τ = 3
 
 @test sample_entropy(ones(10), m, r) == 0.0
 @test sample_entropy(sine, m, r) <= 0.5
