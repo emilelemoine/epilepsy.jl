@@ -1,4 +1,4 @@
-using epilepsy: sample_entropy, sampen_along_axis
+using epilepsy: sample_entropy, sampen_along_axis, sampen_along_axis2
 using NPZ: npzread
 
 eeg = npzread("test_data/eeg_processed.npy")

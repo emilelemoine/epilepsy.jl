@@ -69,16 +69,3 @@ function multiscale_entropy(x::AbstractArray, τ=1, m=2, r=0.2, δ=1)
     sample_entropy(x_mse, m, r, δ)
 
 end
-
-function sampen_along_axis(x::AbstractArray, τ=1, m=2, r=0.2, δ=1)
-
-    n_seg = size(x, 1)
-    sampen = Array{Tuple{Float64,Int64,Int64}}(undef, n_seg)
-
-    for i in eachindex(x)
-        sampen[i] = multiscale_entropy(x[i], τ, m, r, δ)
-    end
-
-    sampen
-
-end
