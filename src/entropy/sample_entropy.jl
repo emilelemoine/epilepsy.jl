@@ -18,7 +18,6 @@ function sample_entropy(x::AbstractArray, m=2, r=0.2, δ=1)
     m -> embedding dimension (must be > length of signal)
     r -> tolerance factor
     δ -> delay =#
-    # TODO For multiscale entropy: wavelet to isolate bands
     N = length(x)
     σ = std(x)
     tolerance = σ * r
@@ -41,7 +40,7 @@ function sample_entropy(x::AbstractArray, m=2, r=0.2, δ=1)
     B = count(x -> x <= tolerance, dist_m)
 
     if B == 0
-        return Inf
+        return Inf, 0, 0
     end
 
     # Repeat for templates m+1
@@ -56,6 +55,10 @@ end
 
 function multiscale_entropy(x::AbstractArray, τ=1, m=2, r=0.2, δ=1)
 
+    if τ == 1
+        sample_entropy(x, m, r, δ)
+    end
+
     N = length(x)
     x = x[1:end - (N % τ)]
     N = length(x)
@@ -64,5 +67,18 @@ function multiscale_entropy(x::AbstractArray, τ=1, m=2, r=0.2, δ=1)
     x_mse = mean(x, dims=1)
 
     sample_entropy(x_mse, m, r, δ)
+
+end
+
+function sampen_along_axis(x::AbstractArray, τ=1, m=2, r=0.2, δ=1)
+
+    n_seg = size(x, 1)
+    sampen = Array{Tuple{Float64,Int64,Int64}}(undef, n_seg)
+
+    for i in eachindex(x)
+        sampen[i] = multiscale_entropy(x[i], τ, m, r, δ)
+    end
+
+    sampen
 
 end
