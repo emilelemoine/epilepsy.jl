@@ -63,7 +63,7 @@ function multiscale_entropy(x::AbstractArray, τ=1, m=2, r=0.2, δ=1)
     x = x[1:end - (N % τ)]
     N = length(x)
     # TODO ordre de dims à vérifier
-    dims = (Int(N / τ), τ)
+    dims = (τ, Int(N / τ))
     x = reshape(x, dims)
     x_mse = mean(x, dims=1)
 
